@@ -1,12 +1,10 @@
-package com.solvd.laba.rbekrenov.travelagency.pojo;
+package com.solvd.laba.rbekrenov.travelagency.model;
 
-import com.solvd.laba.rbekrenov.travelagency.pojo.location.Address;
+import com.solvd.laba.rbekrenov.travelagency.model.location.Address;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 public class Employee {
-    private UUID id;
     private String firstName;
     private String lastName;
     private String email;
@@ -18,20 +16,12 @@ public class Employee {
     private String occupation;
     private Contract[] contracts;
 
-    public Employee(String firstName, String lastName, String email, String phoneNumber, LocalDate birthDate, Address address, double salary, double bonus, String occupation, Contract[] contracts) {
-        this.id = UUID.randomUUID();
+    public Employee(String firstName, String lastName, Address address, LocalDate birthDate) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.birthDate = birthDate;
         this.address = address;
-        this.salary = salary;
-        this.bonus = bonus;
-        this.occupation = occupation;
-        this.contracts = contracts;
+        this.contracts = new Contract[]{};
     }
-
 
     public String fullName() {
         return firstName + " " + lastName;
@@ -46,12 +36,12 @@ public class Employee {
         setContracts(contractsNew);
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+    public double calculateAllContractsGrossIncome(){
+        double result = 0.0;
+        for(Contract c : contracts) {
+            result += c.getTrip().getTotalCost();
+        }
+        return result;
     }
 
     public String getFirstName() {

@@ -1,28 +1,21 @@
-package com.solvd.laba.rbekrenov.travelagency.pojo;
-
-import java.util.UUID;
+package com.solvd.laba.rbekrenov.travelagency.model;
 
 public class Client {
-    private UUID id;
     private String firstName;
     private String lastName;
     private String email;
     private String phoneNumber;
 
+    public Client(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public Client(String firstName, String lastName, String email, String phoneNumber) {
-        this.id = UUID.randomUUID();
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getFirstName() {

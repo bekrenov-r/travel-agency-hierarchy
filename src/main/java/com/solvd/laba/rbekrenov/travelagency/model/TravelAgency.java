@@ -1,4 +1,4 @@
-package com.solvd.laba.rbekrenov.travelagency.pojo;
+package com.solvd.laba.rbekrenov.travelagency.model;
 
 public class TravelAgency {
     public static final double PERFORMANCE_BONUS = 250.0;
@@ -8,10 +8,16 @@ public class TravelAgency {
     private Bill[] bills;
     private double budget;
 
-    public TravelAgency(String name, Department[] departments, Bill[] bills, double budget) {
+    public TravelAgency(String name) {
+        this.name = name;
+        this.departments = new Department[]{};
+        this.bills = new Bill[]{};
+    }
+
+    public TravelAgency(String name, Department[] departments, double budget) {
         this.name = name;
         this.departments = departments;
-        this.bills = bills;
+        this.bills = new Bill[]{};
         this.budget = budget;
     }
 
@@ -43,26 +49,15 @@ public class TravelAgency {
     }
 
     public double calculateGrossIncome(){
-        Employee[] employees = getAllEmployees();
-        int contractsLength = 0;
-        for(Department d : departments) {
-            contractsLength += d.getTotalContractsCount();
-        }
-
-        Contract[] allContracts = new Contract[contractsLength];
-        int contractIndex = 0;
-        for(Employee e : employees) {
-            for(Contract c : e.getContracts()){
-                allContracts[contractIndex] = c;
-                contractIndex++;
-            }
-        }
-
         double result = 0.0;
-        for(Contract c : allContracts){
-            result += c.getTrip().getTotalCost();
+        for(Department d : departments){
+            result += d.calculateGrossIncome();
         }
         return result;
+    }
+
+    public void subtractFromBudget(double amount) {
+        budget -= amount;
     }
 
     public String getName() {

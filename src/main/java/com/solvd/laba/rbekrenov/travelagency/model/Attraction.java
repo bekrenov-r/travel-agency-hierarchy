@@ -1,26 +1,18 @@
-package com.solvd.laba.rbekrenov.travelagency.pojo;
+package com.solvd.laba.rbekrenov.travelagency.model;
 
-import com.solvd.laba.rbekrenov.travelagency.pojo.location.Address;
-
-import java.util.UUID;
+import com.solvd.laba.rbekrenov.travelagency.model.location.Address;
 
 public class Attraction {
-    private UUID id;
     private String name;
     private Address address;
 
+    public Attraction(String name) {
+        this.name = name;
+    }
+
     public Attraction(String name, Address address) {
-        this.id = UUID.randomUUID();
         this.name = name;
         this.address = address;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getName() {

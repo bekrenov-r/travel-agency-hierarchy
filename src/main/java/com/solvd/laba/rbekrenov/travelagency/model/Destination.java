@@ -1,28 +1,22 @@
-package com.solvd.laba.rbekrenov.travelagency.pojo;
+package com.solvd.laba.rbekrenov.travelagency.model;
 
-import com.solvd.laba.rbekrenov.travelagency.pojo.location.Country;
-
-import java.util.UUID;
+import com.solvd.laba.rbekrenov.travelagency.model.location.Country;
 
 public class Destination {
-    private UUID id;
     private Country country;
     private String city;
     private Attraction[] attractions;
 
+    public Destination(Country country, String city) {
+        this.country = country;
+        this.city = city;
+        this.attractions = new Attraction[]{};
+    }
+
     public Destination(Country country, String city, Attraction[] attractions) {
-        this.id = UUID.randomUUID();
         this.country = country;
         this.city = city;
         this.attractions = attractions;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public Country getCountry() {

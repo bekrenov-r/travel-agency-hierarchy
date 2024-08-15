@@ -1,49 +1,50 @@
 package com.solvd.laba.rbekrenov.travelagency;
 
-import com.solvd.laba.rbekrenov.travelagency.pojo.*;
-import com.solvd.laba.rbekrenov.travelagency.pojo.location.Address;
-import com.solvd.laba.rbekrenov.travelagency.pojo.location.Country;
-import com.solvd.laba.rbekrenov.travelagency.service.BillService;
-import com.solvd.laba.rbekrenov.travelagency.service.EmployeeService;
+import com.solvd.laba.rbekrenov.travelagency.model.*;
+import com.solvd.laba.rbekrenov.travelagency.model.location.Address;
+import com.solvd.laba.rbekrenov.travelagency.model.location.Country;
+import com.solvd.laba.rbekrenov.travelagency.service.TravelAgencyService;
 
 import java.time.LocalDate;
 import java.util.Map;
 
 public class Main {
     private static final Destination[] DESTINATIONS = new Destination[]{
-            new Destination(Country.getCountryByCode("FR"), "Paris", new Attraction[]{}),
-            new Destination(Country.getCountryByCode("FR"), "Nice", new Attraction[]{}),
-            new Destination(Country.getCountryByCode("IT"), "Rome", new Attraction[]{}),
-            new Destination(Country.getCountryByCode("IT"), "Milan", new Attraction[]{}),
-            new Destination(Country.getCountryByCode("US"), "New York", new Attraction[]{}),
-            new Destination(Country.getCountryByCode("ES"), "Barcelona", new Attraction[]{})
+            new Destination(Country.getCountryByCode("FR"), "Paris"),
+            new Destination(Country.getCountryByCode("FR"), "Nice"),
+            new Destination(Country.getCountryByCode("IT"), "Rome"),
+            new Destination(Country.getCountryByCode("IT"), "Milan"),
+            new Destination(Country.getCountryByCode("US"), "New York"),
+            new Destination(Country.getCountryByCode("ES"), "Barcelona")
     };
 
     public static void main(String[] args) {
         TravelAgency travelAgency = initTravelAgency();
 
-        EmployeeService employeeService = new EmployeeService(travelAgency);
-        employeeService.grantPerformanceBonusToEmployees();
+        TravelAgencyService service = new TravelAgencyService(travelAgency);
+        service.grantPerformanceBonusToEmployees();
 
-        BillService billService = new BillService(travelAgency);
-        billService.payAllBills();
+        service.payAllBills();
 
         Department bestPerformingDepartment = travelAgency.getBestPerformingDepartment();
         System.out.printf("Best performing department: %s with %s contracts in total.\n", bestPerformingDepartment.getName(), bestPerformingDepartment.getTotalContractsCount());
         System.out.println("Gross income: £" + travelAgency.calculateGrossIncome());
-
-        // overloaded methods: Department.hasEmployee() and BillService.payBill()
-        // static method: Country.getCountryByCode()
     }
 
     private static TravelAgency initTravelAgency() {
-        Employee jamesMcGill = new Employee("James", "McGill", "j.mcgill@example.com", "000000000", LocalDate.parse("1984-04-21"), new Address("London", "Grove St.", "12A", null), 5000.0, 0.0, "Head of department", new Contract[]{});
-        Employee alexMitchell = new Employee("Alex", "Mitchell", "a.mitchell@example.com", "000000000", LocalDate.parse("1984-04-21"), new Address("Birmingham", "Saint St.", "164", "10"), 3200.0, 0.0, "Manager", new Contract[]{});
-        Employee thomasReyes = new Employee("Thomas", "Reyes", "t.reyes@example.com", "000000000", LocalDate.parse("1984-04-21"), new Address("Manchester", "Main St.", "19", null), 3400.0, 0.0, "Manager", new Contract[]{});
+        TravelAgency travelAgency = new TravelAgency("Treasure Island");
 
-        Department londonDepartment = new Department("London Department", new Employee[]{jamesMcGill}, new Address("London", "Silly St.", "477", "137"));
-        Department birminghamDepartment = new Department("Birmingham Department", new Employee[]{alexMitchell}, new Address("Birmingham", "Lucky St.", "831", "76A"));
-        Department manchesterDepartment = new Department("Manchester Department", new Employee[]{thomasReyes}, new Address("Manchester", "Beautiful St.", "23", "54"));
+        Employee jamesMcGill = new Employee("James", "McGill", new Address("London", "Grove St.", "12A", null), LocalDate.parse("1984-04-21"));
+        Employee alexMitchell = new Employee("Alex", "Mitchell", new Address("Birmingham", "Saint St.", "164", "10"), LocalDate.parse("1984-04-21"));
+        Employee thomasReyes = new Employee("Thomas", "Reyes", new Address("Manchester", "Main St.", "19", null), LocalDate.parse("1984-04-21"));
+
+        Department londonDepartment = new Department("London Department", new Address("London", "Silly St.", "477", "137"));
+        londonDepartment.addEmployee(jamesMcGill);
+        Department birminghamDepartment = new Department("Birmingham Department", new Address("Birmingham", "Lucky St.", "831", "76A"));
+        birminghamDepartment.addEmployee(alexMitchell);
+        Department manchesterDepartment = new Department("Manchester Department", new Address("Manchester", "Beautiful St.", "23", "54"));
+        manchesterDepartment.addEmployee(thomasReyes);
+        travelAgency.setDepartments(new Department[]{londonDepartment, birminghamDepartment, manchesterDepartment});
 
         Client janeTuck = new Client("Jane", "Tuck", "j.tuck@example.com", "000000000");
         Client skylerWhite = new Client("Skyler", "White", "s.white@example.com", "000000000");
@@ -84,7 +85,8 @@ public class Main {
                 new Bill("Tax", 15000.0, false),
                 new Bill("Other", 7000.0, false),
         };
-
-        return new TravelAgency("Treasure Island", new Department[]{londonDepartment, birminghamDepartment, manchesterDepartment}, bills, 50000.0);
+        travelAgency.setBills(bills);
+        travelAgency.setBudget(50000.0);
+        return travelAgency;
     }
 }

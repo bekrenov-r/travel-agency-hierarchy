@@ -1,11 +1,10 @@
-package com.solvd.laba.rbekrenov.travelagency.pojo;
+package com.solvd.laba.rbekrenov.travelagency.model;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class Trip {
-    private UUID id;
     private String name;
     private Destination destination;
     private double totalCost;
@@ -13,8 +12,14 @@ public class Trip {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    public Trip(String name, Destination destination) {
+        this.name = name;
+        this.destination = destination;
+        this.costDetails = new HashMap<>();
+        this.totalCost = calculateTotalCost(costDetails);
+    }
+
     public Trip(String name, Destination destination, Map<String, Double> costDetails, LocalDate startDate, LocalDate endDate) {
-        this.id = UUID.randomUUID();
         this.name = name;
         this.destination = destination;
         this.costDetails = costDetails;
@@ -33,14 +38,6 @@ public class Trip {
             result += entry.getValue();
         }
         return result;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getName() {

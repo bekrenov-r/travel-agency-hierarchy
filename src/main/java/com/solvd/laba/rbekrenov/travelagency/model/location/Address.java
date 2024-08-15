@@ -1,28 +1,25 @@
-package com.solvd.laba.rbekrenov.travelagency.pojo.location;
-
-import java.util.UUID;
+package com.solvd.laba.rbekrenov.travelagency.model.location;
 
 public class Address {
-    private UUID id;
     private String city;
     private String street;
     private String buildingNumber;
     private String roomNumber;
+    private String zipCode;
 
-    public Address(String city, String street, String buildingNumber, String roomNumber) {
-        this.id = UUID.randomUUID();
+    public Address(String city, String street, String buildingNumber, String zipCode) {
+        this.city = city;
+        this.street = street;
+        this.buildingNumber = buildingNumber;
+        this.zipCode = zipCode;
+    }
+
+    public Address(String city, String street, String buildingNumber, String roomNumber, String zipCode) {
         this.city = city;
         this.street = street;
         this.buildingNumber = buildingNumber;
         this.roomNumber = roomNumber;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+        this.zipCode = zipCode;
     }
 
     public String getCity() {
@@ -55,5 +52,13 @@ public class Address {
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 }

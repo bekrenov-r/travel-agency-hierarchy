@@ -1,14 +1,19 @@
-package com.solvd.laba.rbekrenov.travelagency.pojo.location;
+package com.solvd.laba.rbekrenov.travelagency.model.location;
 
-public class Country {
+public final class Country {
     public static final Country[] COUNTRIES = new Country[]{
             new Country("France", "FR"),
             new Country("Italy", "IT"),
             new Country("USA", "US"),
             new Country("Spain", "ES")
     };
-    private String name;
-    private String countryCode;
+    private final String name;
+    private final String countryCode;
+
+    private Country(String name, String countryCode) {
+        this.name = name;
+        this.countryCode = countryCode;
+    }
 
     public static Country getCountryByCode(String code) {
         for(Country c : COUNTRIES){
@@ -19,24 +24,11 @@ public class Country {
         throw new RuntimeException("No country with this code");
     }
 
-    public Country(String name, String countryCode) {
-        this.name = name;
-        this.countryCode = countryCode;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getCountryCode() {
         return countryCode;
-    }
-
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
     }
 }
