@@ -3,6 +3,7 @@ package com.solvd.laba.rbekrenov.travelagency.model;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Trip {
     private String name;
@@ -86,5 +87,41 @@ public class Trip {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Trip)) return false;
+        Trip other = (Trip) o;
+
+        return Objects.equals(totalCost, other.totalCost) && Objects.equals(name, other.name)
+                && Objects.equals(destination, other.destination)
+                && Objects.equals(costDetails, other.costDetails)
+                && Objects.equals(startDate, other.startDate)
+                && Objects.equals(endDate, other.endDate);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = Objects.hashCode(name);
+        hash = 31 * hash + Objects.hashCode(destination);
+        hash = 31 * hash + Objects.hashCode(totalCost);
+        hash = 31 * hash + Objects.hashCode(costDetails);
+        hash = 31 * hash + Objects.hashCode(startDate);
+        hash = 31 * hash + Objects.hashCode(endDate);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Trip{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", destination=").append(destination);
+        sb.append(", totalCost=").append(totalCost);
+        sb.append(", startDate=").append(startDate);
+        sb.append(", endDate=").append(endDate);
+        sb.append('}');
+        return sb.toString();
     }
 }

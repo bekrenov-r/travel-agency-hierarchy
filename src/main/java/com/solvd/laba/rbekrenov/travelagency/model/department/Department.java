@@ -1,20 +1,31 @@
-package com.solvd.laba.rbekrenov.travelagency.model;
+package com.solvd.laba.rbekrenov.travelagency.model.department;
 
+import com.solvd.laba.rbekrenov.travelagency.model.person.employee.Employee;
 import com.solvd.laba.rbekrenov.travelagency.model.location.Address;
+import com.solvd.laba.rbekrenov.travelagency.model.person.employee.Salesman;
 
 import java.util.Objects;
 
-public class Attraction {
+public abstract class Department {
     private String name;
     private Address address;
 
-    public Attraction(String name) {
-        this.name = name;
-    }
-
-    public Attraction(String name, Address address) {
+    public Department(String name, Address address) {
         this.name = name;
         this.address = address;
+    }
+
+    public abstract void addEmployee(Employee employee);
+
+    public abstract Employee[] getEmployees();
+
+    public boolean hasEmployee(Employee employee) {
+        for (Employee e : getEmployees()) {
+            if (employee.equals(e)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getName() {
@@ -36,8 +47,8 @@ public class Attraction {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Attraction)) return false;
-        Attraction other = (Attraction) o;
+        if (!(o instanceof Department)) return false;
+        Department other = (Department) o;
 
         return Objects.equals(name, other.name) && Objects.equals(address, other.address);
     }
@@ -51,9 +62,9 @@ public class Attraction {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Attraction{");
+        StringBuilder sb = new StringBuilder(getClass().getSimpleName());
+        sb.append("{");
         sb.append("name='").append(name).append('\'');
-        sb.append(", address=").append(address);
         sb.append('}');
         return sb.toString();
     }

@@ -2,6 +2,9 @@ package com.solvd.laba.rbekrenov.travelagency.model;
 
 import com.solvd.laba.rbekrenov.travelagency.model.location.Country;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class Destination {
     private Country country;
     private String city;
@@ -41,5 +44,33 @@ public class Destination {
 
     public void setAttractions(Attraction[] attractions) {
         this.attractions = attractions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Destination)) return false;
+        Destination other = (Destination) o;
+
+        return Objects.equals(country, other.country) && Objects.equals(city, other.city)
+                && Arrays.equals(attractions, other.attractions);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = Objects.hashCode(country);
+        hash = 31 * hash + Objects.hashCode(city);
+        hash = 31 * hash + Arrays.hashCode(attractions);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Destination{");
+        sb.append("country=").append(country);
+        sb.append(", city='").append(city).append('\'');
+        sb.append(", attractions=").append(Arrays.toString(attractions));
+        sb.append('}');
+        return sb.toString();
     }
 }

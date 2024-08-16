@@ -1,5 +1,7 @@
 package com.solvd.laba.rbekrenov.travelagency.model.location;
 
+import java.util.Objects;
+
 public class Address {
     private String city;
     private String street;
@@ -60,5 +62,39 @@ public class Address {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Address)) return false;
+        Address other = (Address) o;
+
+        return Objects.equals(city, other.city) && Objects.equals(street, other.street)
+                && Objects.equals(buildingNumber, other.buildingNumber)
+                && Objects.equals(roomNumber, other.roomNumber)
+                && Objects.equals(zipCode, other.zipCode);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = Objects.hashCode(city);
+        hash = 31 * hash + Objects.hashCode(street);
+        hash = 31 * hash + Objects.hashCode(buildingNumber);
+        hash = 31 * hash + Objects.hashCode(roomNumber);
+        hash = 31 * hash + Objects.hashCode(zipCode);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Address{");
+        sb.append("city='").append(city).append('\'');
+        sb.append(", street='").append(street).append('\'');
+        sb.append(", buildingNumber='").append(buildingNumber).append('\'');
+        sb.append(", roomNumber='").append(roomNumber).append('\'');
+        sb.append(", zipCode='").append(zipCode).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }
