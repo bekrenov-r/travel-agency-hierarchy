@@ -1,37 +1,38 @@
 package com.solvd.laba.rbekrenov.travelagency;
 
-import com.solvd.laba.rbekrenov.travelagency.model.*;
-import com.solvd.laba.rbekrenov.travelagency.model.contract.Contract;
-import com.solvd.laba.rbekrenov.travelagency.model.contract.JobContract;
-import com.solvd.laba.rbekrenov.travelagency.model.contract.TripContract;
-import com.solvd.laba.rbekrenov.travelagency.model.department.AccountingDepartment;
-import com.solvd.laba.rbekrenov.travelagency.model.department.Department;
-import com.solvd.laba.rbekrenov.travelagency.model.department.HumanResourcesDepartment;
-import com.solvd.laba.rbekrenov.travelagency.model.department.SalesDepartment;
-import com.solvd.laba.rbekrenov.travelagency.model.location.Address;
-import com.solvd.laba.rbekrenov.travelagency.model.location.Country;
-import com.solvd.laba.rbekrenov.travelagency.model.person.Client;
-import com.solvd.laba.rbekrenov.travelagency.model.person.employee.Accountant;
-import com.solvd.laba.rbekrenov.travelagency.model.person.employee.Employee;
-import com.solvd.laba.rbekrenov.travelagency.model.person.employee.HRManager;
-import com.solvd.laba.rbekrenov.travelagency.model.person.employee.Salesman;
+import com.solvd.laba.rbekrenov.travelagency.contract.JobContract;
+import com.solvd.laba.rbekrenov.travelagency.contract.TripContract;
+import com.solvd.laba.rbekrenov.travelagency.department.AccountingDepartment;
+import com.solvd.laba.rbekrenov.travelagency.department.HumanResourcesDepartment;
+import com.solvd.laba.rbekrenov.travelagency.department.SalesDepartment;
+import com.solvd.laba.rbekrenov.travelagency.finance.Bill;
+import com.solvd.laba.rbekrenov.travelagency.finance.payment.BankAccount;
+import com.solvd.laba.rbekrenov.travelagency.location.Address;
+import com.solvd.laba.rbekrenov.travelagency.location.Country;
+import com.solvd.laba.rbekrenov.travelagency.person.Client;
+import com.solvd.laba.rbekrenov.travelagency.person.employee.Accountant;
+import com.solvd.laba.rbekrenov.travelagency.person.employee.Employee;
+import com.solvd.laba.rbekrenov.travelagency.person.employee.HRManager;
+import com.solvd.laba.rbekrenov.travelagency.person.employee.Salesman;
 import com.solvd.laba.rbekrenov.travelagency.service.TravelAgencyService;
 
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
-    private static final Destination[] DESTINATIONS = new Destination[]{
-            new Destination(Country.FRANCE, "Paris"),
-            new Destination(Country.FRANCE, "Nice"),
-            new Destination(Country.ITALY, "Rome"),
-            new Destination(Country.ITALY, "Milan"),
-            new Destination(Country.USA, "New York"),
-            new Destination(Country.SPAIN, "Barcelona")
-    };
+    private static final Destination[] DESTINATIONS;
+
+    static {
+        DESTINATIONS = new Destination[]{
+                new Destination(Country.FRANCE, "Paris"),
+                new Destination(Country.FRANCE, "Nice"),
+                new Destination(Country.ITALY, "Rome"),
+                new Destination(Country.ITALY, "Milan"),
+                new Destination(Country.USA, "New York"),
+                new Destination(Country.SPAIN, "Barcelona")
+        };
+    }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -41,13 +42,13 @@ public class Main {
         double budget = sc.nextInt();
         TravelAgency travelAgency = initTravelAgency(name, budget);
 
-        TravelAgencyService service = new TravelAgencyService(travelAgency);
-        if(travelAgency.calculateOverallSalary() > travelAgency.getBudget()) {
+        if(!travelAgency.getAccountingDepartment().budgetSuffices(travelAgency.calculateOverallSalary())) {
             System.out.println("Company is bankrupt!");
             return;
         }
-        service.paySalaryToAllEmployees(travelAgency.getAllEmployees());
-        service.payAllBills();
+        TravelAgencyService service = new TravelAgencyService();
+        travelAgency.getAccountingDepartment().paySalaryToAllEmployees(travelAgency.getAllEmployees());
+        travelAgency.getAccountingDepartment().payAllBills(travelAgency.getBills());
         System.out.printf("Average employee age: %s\n", service.calculateAverageEmployeeAge(travelAgency.getAllEmployees()));
 
         SalesDepartment bestSalesDepartment = travelAgency.getBestPerformingSalesDepartment();
@@ -58,7 +59,7 @@ public class Main {
     private static TravelAgency initTravelAgency(String name, double budget) {
         TravelAgency travelAgency = new TravelAgency(name);
 
-        HumanResourcesDepartment hrDepartment = new HumanResourcesDepartment("HR Department", new Address("London", "Great St.", "734", "23-092"));
+        HumanResourcesDepartment hrDepartment = new HumanResourcesDepartment("HR Department", new Address(Country.GREAT_BRITAIN, "London", "Great St.", "734", "23-092"));
         travelAgency.setHumanResourcesDepartment(hrDepartment);
         HRManager hrManager = new HRManager("Alice", "Main", "000000000", LocalDate.parse("1970-03-30"));
         hrManager.setEmploymentDate(LocalDate.parse("2015-04-26"));
@@ -69,15 +70,16 @@ public class Main {
         Salesman alexMitchell = new Salesman("Alex", "Mitchell", "000000000", LocalDate.parse("1994-01-01"));
         Salesman thomasReyes = new Salesman("Thomas", "Reyes", "000000000", LocalDate.parse("2000-10-13"));
 
-        SalesDepartment londonSalesDepartment = new SalesDepartment("London Sales Department", new Address("London", "Silly St.", "477", "137"));
-        SalesDepartment birminghamSalesDepartment = new SalesDepartment("Birmingham Sales Department", new Address("Birmingham", "Lucky St.", "831", "76A"));
-        SalesDepartment manchesterSalesDepartment = new SalesDepartment("Manchester Sales Department", new Address("Manchester", "Beautiful St.", "23", "54"));
+        SalesDepartment londonSalesDepartment = new SalesDepartment("London Sales Department", new Address(Country.GREAT_BRITAIN, "London", "Silly St.", "477", "137"));
+        SalesDepartment birminghamSalesDepartment = new SalesDepartment("Birmingham Sales Department", new Address(Country.GREAT_BRITAIN, "Birmingham", "Lucky St.", "831", "76A"));
+        SalesDepartment manchesterSalesDepartment = new SalesDepartment("Manchester Sales Department", new Address(Country.GREAT_BRITAIN, "Manchester", "Beautiful St.", "23", "54"));
         travelAgency.setSalesDepartments(new SalesDepartment[]{londonSalesDepartment, birminghamSalesDepartment, manchesterSalesDepartment});
         new JobContract(jamesMcGill, hrManager, londonSalesDepartment, 4500.0).sign();
         new JobContract(alexMitchell, hrManager, birminghamSalesDepartment, 4500.0).sign();
         new JobContract(thomasReyes, hrManager, manchesterSalesDepartment, 4500.0).sign();
 
-        AccountingDepartment accountingDepartment = new AccountingDepartment("Accounting department", new Address("Liverpool", "Main St.", "31", "67", "734-242"));
+        AccountingDepartment accountingDepartment = new AccountingDepartment("Accounting department", new Address(Country.GREAT_BRITAIN, "Liverpool", "Main St.", "31", "67", "734-242"));
+        accountingDepartment.setCompanyBankAccount(new BankAccount("000000000000000000", budget));
         travelAgency.setAccountingDepartment(accountingDepartment);
         Employee accountant = new Accountant("Susan", "Public", "000000000", LocalDate.parse("1992-08-22"));
         new JobContract(accountant, hrManager, accountingDepartment, 4000.0).sign();
@@ -105,6 +107,7 @@ public class Main {
                 Map.of("ACCOMMODATION", 440.0, "TRAVEL", 600.0, "FOOD", 200.0),
                 LocalDate.now(), LocalDate.now().plusDays(3));
 
+        milanTrip.book(janeTuck);
         new TripContract(jamesMcGill, janeTuck, parisTrip).sign();
         new TripContract(jamesMcGill, charlesBlack, romeTrip).sign();
         new TripContract(jamesMcGill, skylerWhite, niceTrip).sign();
@@ -117,7 +120,6 @@ public class Main {
                 new Bill("Other", 7000.0, false),
         };
         travelAgency.setBills(bills);
-        travelAgency.setBudget(budget);
         System.out.printf("Initialized travel agency '%s' with budget £%.2f\n", name, budget);
         return travelAgency;
     }
