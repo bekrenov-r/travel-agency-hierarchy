@@ -1,16 +1,24 @@
 package com.solvd.laba.rbekrenov.travelagency.service;
 
+import com.solvd.laba.rbekrenov.travelagency.exception.AlreadyPaidException;
+import com.solvd.laba.rbekrenov.travelagency.exception.MoneyTransferReceiverException;
 import com.solvd.laba.rbekrenov.travelagency.exception.NotEnoughMoneyException;
-import com.solvd.laba.rbekrenov.travelagency.finance.Payable;
-import com.solvd.laba.rbekrenov.travelagency.finance.payment.PaymentCredentials;
+import com.solvd.laba.rbekrenov.travelagency.model.finance.Payable;
+import com.solvd.laba.rbekrenov.travelagency.model.finance.payment.PaymentCredentials;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PaymentProcessor {
-    public final void processPayment(Payable payable, PaymentCredentials paymentCredentials){
+    private static final Logger log = LogManager.getLogger(PaymentProcessor.class);
+
+    public static void processPayment(Payable payable, PaymentCredentials sender, PaymentCredentials receiver) throws AlreadyPaidException {
+        if(payable.isPaid()) throw new AlreadyPaidException();
+        if(sender.equals(receiver)) throw new MoneyTransferReceiverException("Sender credentials cannot equal to receiver");
         double amount = payable.getPrice();
         try {
-            paymentCredentials.pay(amount);
+            sender.pay(amount, receiver);
         } catch(NotEnoughMoneyException ex){
-            System.out.println(ex.getMessage());
+            log.error(ex.getMessage());
         }
         payable.setPaid(true);
     }
