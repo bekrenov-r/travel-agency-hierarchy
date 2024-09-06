@@ -1,0 +1,17 @@
+appenders:
+  console:
+    name: console
+    target: SYSTEM_OUT
+    patternLayout:
+      pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+  file:
+    name: file
+    fileName: target/logs/log4j.log
+    patternLayout:
+      pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+loggers:
+  root:
+    level: debug
+    appenderRef:
+      - ref: console
+      - ref: file
