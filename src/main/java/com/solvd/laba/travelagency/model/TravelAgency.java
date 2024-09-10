@@ -34,7 +34,9 @@ public class TravelAgency {
     }
 
     public SalesDepartment getBestPerformingSalesDepartment() {
-        if(salesDepartments.isEmpty()) return null;
+        if(salesDepartments.isEmpty()) {
+            return null;
+        }
         Iterator<SalesDepartment> iterator = salesDepartments.iterator();
         SalesDepartment result = iterator.next();
         while(iterator.hasNext()){

@@ -7,7 +7,9 @@ import java.util.Collection;
 
 public class TravelAgencyService {
     public int calculateAverageEmployeeAge(Collection<Employee> employees) {
-        if(employees.size() == 0) throw new IllegalArgumentException("Cannot calculate average age for empty list of employees");
+        if(employees.size() == 0) {
+            throw new IllegalArgumentException("Cannot calculate average age for empty list of employees");
+        }
         int sum = 0;
         for(Employee e : employees){
             sum += e.getAgeYears();
@@ -16,7 +18,9 @@ public class TravelAgencyService {
     }
 
     public int calculateAverageClientAge(Collection<Client> clients) {
-        if(clients.size() == 0) throw new IllegalArgumentException("Cannot calculate average age for empty list of employees");
+        if(clients.size() == 0) {
+            throw new IllegalArgumentException("Cannot calculate average age for empty list of employees");
+        }
         int sum = 0;
         for(Client c : clients){
             sum += c.getAgeYears();

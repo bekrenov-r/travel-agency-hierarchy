@@ -1,6 +1,7 @@
 package com.solvd.laba.travelagency.model.contract;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public abstract class Contract {
     private LocalDate signedDate;
@@ -21,11 +22,11 @@ public abstract class Contract {
         if (this == o) return true;
         if (!(o instanceof Contract)) return false;
         Contract other = (Contract) o;
-        return (signedDate == null && other.signedDate == null) || signedDate.equals(other);
+        return Objects.equals(signedDate, other.signedDate);
     }
 
     @Override
     public int hashCode() {
-        return signedDate != null ? signedDate.hashCode() : 0;
+        return Objects.hashCode(signedDate);
     }
 }

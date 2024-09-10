@@ -229,4 +229,11 @@ public class CustomLinkedListTests {
         List<String> subList = list.subList(1, 4);
         assertIterableEquals(Arrays.asList("2", "3", "4"), subList);
     }
+
+    @Test
+    void testToString() {
+        String expected = "[1, 2, 3, 4, 2]";
+        String actual = list.toString();
+        assertEquals(expected, actual);
+    }
 }

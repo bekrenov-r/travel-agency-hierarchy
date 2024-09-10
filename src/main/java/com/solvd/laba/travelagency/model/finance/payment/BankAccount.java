@@ -6,6 +6,7 @@ import com.solvd.laba.travelagency.exception.NotEnoughMoneyException;
 import java.util.Objects;
 
 public class BankAccount implements PaymentCredentials {
+    private static final String CREDENTIAL_TYPE = "BANK_ACCOUNT";
     private String number;
     private double amount;
 
@@ -16,23 +17,37 @@ public class BankAccount implements PaymentCredentials {
 
     @Override
     public void pay(double amount, PaymentCredentials receiver) throws NotEnoughMoneyException {
-        if(amount <= 0) throw new NegativeAmountException(amount);
-        if(this.amount < amount)
+        if(amount <= 0) {
+            throw new NegativeAmountException(amount);
+        }
+        if(this.amount < amount){
             throw new NotEnoughMoneyException();
+        }
         this.amount -= amount;
         receiver.receive(amount);
     }
 
     @Override
     public void receive(double amount) {
-        if(amount <= 0)
+        if(amount <= 0){
             throw new IllegalArgumentException("Only positive amount allowed for this operation");
+        }
         this.amount += amount;
     }
 
     @Override
     public double getAvailableAmount() {
         return amount;
+    }
+
+    @Override
+    public String getCredentialType() {
+        return CREDENTIAL_TYPE;
+    }
+
+    @Override
+    public String getCredentialId() {
+        return number;
     }
 
     public String getNumber() {

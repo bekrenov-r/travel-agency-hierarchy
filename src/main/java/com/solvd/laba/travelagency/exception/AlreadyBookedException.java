@@ -6,4 +6,8 @@ public class AlreadyBookedException extends RuntimeException {
     public AlreadyBookedException() {
         super(MESSAGE);
     }
+
+    public AlreadyBookedException(String message) {
+        super(message);
+    }
 }

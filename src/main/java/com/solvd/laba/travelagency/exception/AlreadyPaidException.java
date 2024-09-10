@@ -6,4 +6,8 @@ public class AlreadyPaidException extends Exception {
     public AlreadyPaidException() {
         super(MESSAGE);
     }
+
+    public AlreadyPaidException(String message) {
+        super(message);
+    }
 }

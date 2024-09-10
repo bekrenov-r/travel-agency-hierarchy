@@ -4,6 +4,7 @@ import com.solvd.laba.travelagency.exception.AlreadyPaidException;
 import com.solvd.laba.travelagency.exception.NegativeAmountException;
 import com.solvd.laba.travelagency.model.finance.Bill;
 import com.solvd.laba.travelagency.model.finance.payment.BankAccount;
+import com.solvd.laba.travelagency.model.finance.payment.Transaction;
 import com.solvd.laba.travelagency.model.location.Address;
 import com.solvd.laba.travelagency.model.person.employee.Accountant;
 import com.solvd.laba.travelagency.model.person.employee.Employee;
@@ -17,8 +18,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class AccountingDepartment extends Department implements BudgetManagement, BillManagement, SalaryManagement {
-    public static final int FINANCE_REPORTS_NEEDED_FOR_PERFORMANCE_BONUS = 2;
     private static final Logger log = LogManager.getLogger(AccountingDepartment.class);
+
+    public static final int FINANCE_REPORTS_NEEDED_FOR_PERFORMANCE_BONUS = 2;
+
     private BankAccount companyBankAccount;
     private List<Accountant> accountants;
 
@@ -50,27 +53,31 @@ public class AccountingDepartment extends Department implements BudgetManagement
     public void paySalary(Employee e) {
         double amount = e.calculateSalary();
         Bill salary = new Bill("Salary", amount, e.getSalaryCredentials());
+        Transaction transaction = new Transaction(companyBankAccount, e.getSalaryCredentials(), salary);
         try {
             log.info("Paying salary (£{}) for employee {}...", amount, e.fullName());
-            new PaymentProcessor(salary, companyBankAccount, e.getSalaryCredentials()).processPayment();
+            PaymentProcessor.processTransaction(transaction);
         } catch(AlreadyPaidException ex){
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
     }
 
     @Override
     public void payBill(Bill bill) {
+        Transaction transaction = new Transaction(companyBankAccount, bill.getReceiverCredentials(), bill);
         try {
             log.info("Paying bill (£{})...", bill.getPrice());
-            new PaymentProcessor(bill, companyBankAccount, bill.getReceiverCredentials()).processPayment();
+            PaymentProcessor.processTransaction(transaction);
         } catch (AlreadyPaidException ex){
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
     }
 
     @Override
     public void addToBudget(double amount) {
-        if(amount <= 0) throw new NegativeAmountException(amount);
+        if(amount <= 0) {
+            throw new NegativeAmountException(amount);
+        }
         companyBankAccount.receive(amount);
     }
 

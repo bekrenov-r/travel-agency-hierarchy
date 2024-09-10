@@ -5,6 +5,7 @@ import com.solvd.laba.travelagency.exception.NotEnoughMoneyException;
 import java.util.Objects;
 
 public class CreditCard implements PaymentCredentials {
+    private static final String CREDENTIAL_TYPE = "CREDIT_CARD";
     private String number;
     private String expirationDate;
     private String cvv;
@@ -34,14 +35,25 @@ public class CreditCard implements PaymentCredentials {
 
     @Override
     public void receive(double amount) {
-        if(amount <= 0)
+        if(amount <= 0){
             throw new IllegalArgumentException("Only positive amount allowed for this operation");
+        }
         this.amount += amount;
     }
 
     @Override
     public double getAvailableAmount() {
         return amount;
+    }
+
+    @Override
+    public String getCredentialType() {
+        return CREDENTIAL_TYPE;
+    }
+
+    @Override
+    public String getCredentialId() {
+        return number;
     }
 
     public String getNumber() {

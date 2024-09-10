@@ -17,7 +17,9 @@ import com.solvd.laba.travelagency.model.person.employee.Accountant;
 import com.solvd.laba.travelagency.model.person.employee.Employee;
 import com.solvd.laba.travelagency.model.person.employee.HRManager;
 import com.solvd.laba.travelagency.model.person.employee.Salesman;
+import com.solvd.laba.travelagency.service.TransactionStorageManager;
 import com.solvd.laba.travelagency.service.TravelAgencyService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,6 +65,8 @@ public class Main {
                 bestSalesDepartment.getName(), bestSalesDepartment.getTotalTripContractsCount())
         );
         log.info("Gross income: £" + travelAgency.calculateGrossIncome());
+        List<String> transactionsToday = TransactionStorageManager.getTransactionsOnDate(LocalDate.now());
+        log.info("Transactions today: {}", transactionsToday);
     }
 
     private static TravelAgency initTravelAgency(String name, double budget) {
@@ -142,9 +146,13 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         System.out.println("Input travel agency name:");
         String name = sc.nextLine();
-        while (name.isBlank()) {
+        while (StringUtils.isBlank(name)) {
             System.out.println("Input cannot be empty. Try again");
-            name = sc.nextLine();
+            name = StringUtils.strip(sc.nextLine());
+        }
+        String firstLetter = String.valueOf(name.charAt(0));
+        if(StringUtils.isAllLowerCase(firstLetter)){
+            return StringUtils.capitalize(name);
         }
         return name;
     }
@@ -152,11 +160,11 @@ public class Main {
     private static double getAgencyBudget() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Input budget:");
-        while(true) {
-            try {
-                String input = sc.nextLine();
+        while (true) {
+            String input = sc.nextLine();
+            if (StringUtils.isNumeric(input)) {
                 return Double.parseDouble(input);
-            } catch(NumberFormatException ex) {
+            } else {
                 System.out.println("Input is not a valid number. Try again");
                 sc.next();
             }

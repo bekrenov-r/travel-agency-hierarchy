@@ -114,7 +114,9 @@ public class Trip implements Bookable, Payable {
 
     @Override
     public void book(Client client) {
-        if(this.isBooked) throw new AlreadyBookedException();
+        if(this.isBooked) {
+            throw new AlreadyBookedException();
+        }
         this.isBooked = true;
         this.bookedBy = client;
     }
