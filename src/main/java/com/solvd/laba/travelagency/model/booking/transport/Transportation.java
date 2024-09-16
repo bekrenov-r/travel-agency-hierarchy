@@ -2,6 +2,7 @@ package com.solvd.laba.travelagency.model.booking.transport;
 
 import com.solvd.laba.travelagency.exception.AlreadyBookedException;
 import com.solvd.laba.travelagency.model.booking.Bookable;
+import com.solvd.laba.travelagency.model.finance.Currency;
 import com.solvd.laba.travelagency.model.finance.Payable;
 import com.solvd.laba.travelagency.model.location.Address;
 import com.solvd.laba.travelagency.model.person.Client;
@@ -15,22 +16,25 @@ public abstract class Transportation implements Bookable, Payable {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private double price;
+    private Currency currency;
     private boolean isBooked;
     private Client bookedBy;
     private boolean isPaid;
 
-    public Transportation(Address startLocation, Address endLocation, double price) {
+    public Transportation(Address startLocation, Address endLocation, double price, Currency currency) {
         this.startLocation = startLocation;
         this.endLocation = endLocation;
         this.price = price;
+        this.currency = currency;
     }
 
-    public Transportation(Address startLocation, Address endLocation, double price, LocalDateTime startTime, LocalDateTime endTime) {
+    public Transportation(Address startLocation, Address endLocation, double price, Currency currency, LocalDateTime startTime, LocalDateTime endTime) {
         this.startLocation = startLocation;
         this.endLocation = endLocation;
         this.startTime = startTime;
         this.endTime = endTime;
         this.price = price;
+        this.currency = currency;
     }
 
     @Override
@@ -86,6 +90,15 @@ public abstract class Transportation implements Bookable, Payable {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    @Override
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 
     public LocalDateTime getStartTime() {

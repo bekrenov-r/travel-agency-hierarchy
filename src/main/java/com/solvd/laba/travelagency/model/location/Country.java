@@ -1,17 +1,22 @@
 package com.solvd.laba.travelagency.model.location;
 
-public final class Country {
-    public static final Country FRANCE = new Country("France", "FR");
-    public static final Country ITALY = new Country("Italy", "IT");
-    public static final Country USA = new Country("USA", "US");
-    public static final Country SPAIN = new Country("Spain", "ES");
-    public static final Country GREAT_BRITAIN = new Country("Great Britain", "GB");
+import com.solvd.laba.travelagency.model.finance.Currency;
+
+public enum Country {
+    FRANCE("France", "FR", Currency.EUR),
+    ITALY("Italy", "IT", Currency.EUR),
+    USA("USA", "US", Currency.USD),
+    SPAIN("Spain", "ES", Currency.EUR),
+    GREAT_BRITAIN("Great Britain", "GB", Currency.GBP);
+
     private final String name;
     private final String countryCode;
+    private final Currency currency;
 
-    private Country(String name, String countryCode) {
+    Country(String name, String countryCode, Currency currency) {
         this.name = name;
         this.countryCode = countryCode;
+        this.currency = currency;
     }
 
     public String getName() {
@@ -20,6 +25,10 @@ public final class Country {
 
     public String getCountryCode() {
         return countryCode;
+    }
+
+    public Currency getCurrency() {
+        return currency;
     }
 
     @Override

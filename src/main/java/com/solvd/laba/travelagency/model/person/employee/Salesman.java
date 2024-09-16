@@ -25,18 +25,14 @@ public class Salesman extends Employee {
 
     @Override
     protected double calculateBonus() {
-        if (tripContracts.size() >= SalesDepartment.TRIP_CONTRACTS_NEEDED_FOR_PERFORMANCE_BONUS) {
-            return TravelAgency.PERFORMANCE_BONUS;
-        }
-        return 0.0;
+        return tripContracts.size() >= SalesDepartment.TRIP_CONTRACTS_NEEDED_FOR_PERFORMANCE_BONUS
+                ? TravelAgency.PERFORMANCE_BONUS : 0.0;
     }
 
     public double calculateAllContractsGrossIncome(){
-        double result = 0.0;
-        for(TripContract tc : tripContracts) {
-            result += tc.getTrip().getTotalCost();
-        }
-        return result;
+        return tripContracts.stream()
+                .map(tc -> tc.getTrip().getPrice())
+                .reduce(0.0, Double::sum);
     }
 
     public void addTripContract(TripContract contract) {

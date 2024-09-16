@@ -1,12 +1,14 @@
 package com.solvd.laba.travelagency.model.booking.transport;
 
-public final class FlightClass {
-    public static final FlightClass BUSINESS_CLASS = new FlightClass("Business class");
-    public static final FlightClass FIRST_CLASS = new FlightClass("First class");
-    public static final FlightClass SECOND_CLASS = new FlightClass("Second class");
-    public static final FlightClass ECONOMY_CLASS = new FlightClass("Economy class");
+public enum FlightClass {
+    BUSINESS_CLASS("Business class"),
+    FIRST_CLASS("First class"),
+    SECOND_CLASS("Second class"),
+    ECONOMY_CLASS("Economy class");
+
     private final String name;
-    private FlightClass(String name) {
+
+    FlightClass(String name) {
         this.name = name;
     }
 

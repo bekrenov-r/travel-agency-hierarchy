@@ -1,11 +1,13 @@
 package com.solvd.laba.travelagency.model.booking.transport;
 
-public class FlightCompany {
-    public static final FlightCompany RYAN_AIR = new FlightCompany("Ryan Air");
-    public static final FlightCompany EMIRATES = new FlightCompany("Emirates");
-    public static final FlightCompany WIZZ_AIR = new FlightCompany("Wizz Air");
+public enum FlightCompany {
+    RYAN_AIR("Ryan Air"),
+    EMIRATES("Emirates"),
+    WIZZ_AIR("Wizz Air");
+
     private final String name;
-    private FlightCompany(String name) {
+
+    FlightCompany(String name) {
         this.name = name;
     }
 

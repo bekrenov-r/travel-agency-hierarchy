@@ -7,12 +7,14 @@ import java.util.Objects;
 public class Bill implements Payable {
     private String title;
     private double amount;
+    private Currency currency;
     private boolean isPaid;
     private PaymentCredentials receiverCredentials;
 
-    public Bill(String title, double amount, PaymentCredentials receiverCredentials) {
+    public Bill(String title, double amount, Currency currency, PaymentCredentials receiverCredentials) {
         this.title = title;
         this.amount = amount;
+        this.currency = currency;
         this.receiverCredentials = receiverCredentials;
     }
 
@@ -28,6 +30,10 @@ public class Bill implements Payable {
         this.amount = amount;
     }
 
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
     @Override
     public boolean isPaid() {
         return isPaid;
@@ -41,6 +47,11 @@ public class Bill implements Payable {
     @Override
     public double getPrice() {
         return amount;
+    }
+
+    @Override
+    public Currency getCurrency() {
+        return currency;
     }
 
     public PaymentCredentials getReceiverCredentials() {

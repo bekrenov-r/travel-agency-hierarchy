@@ -1,6 +1,8 @@
 package com.solvd.laba.travelagency;
 
 import com.solvd.laba.travelagency.model.TravelAgency;
+import com.solvd.laba.travelagency.model.booking.CostOption;
+import com.solvd.laba.travelagency.model.booking.PaymentDetails;
 import com.solvd.laba.travelagency.model.booking.Trip;
 import com.solvd.laba.travelagency.model.contract.JobContract;
 import com.solvd.laba.travelagency.model.contract.TripContract;
@@ -8,6 +10,7 @@ import com.solvd.laba.travelagency.model.department.AccountingDepartment;
 import com.solvd.laba.travelagency.model.department.HumanResourcesDepartment;
 import com.solvd.laba.travelagency.model.department.SalesDepartment;
 import com.solvd.laba.travelagency.model.finance.Bill;
+import com.solvd.laba.travelagency.model.finance.Currency;
 import com.solvd.laba.travelagency.model.finance.payment.BankAccount;
 import com.solvd.laba.travelagency.model.location.Address;
 import com.solvd.laba.travelagency.model.location.Country;
@@ -17,6 +20,7 @@ import com.solvd.laba.travelagency.model.person.employee.Accountant;
 import com.solvd.laba.travelagency.model.person.employee.Employee;
 import com.solvd.laba.travelagency.model.person.employee.HRManager;
 import com.solvd.laba.travelagency.model.person.employee.Salesman;
+import com.solvd.laba.travelagency.service.CurrencyConverter;
 import com.solvd.laba.travelagency.service.TransactionStorageManager;
 import com.solvd.laba.travelagency.service.TravelAgencyService;
 import org.apache.commons.lang3.StringUtils;
@@ -25,23 +29,24 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.util.*;
 
 public class Main {
     private static final Logger log = LogManager.getLogger(Main.class);
-
-    private static final Destination[] DESTINATIONS;
+    private static final boolean CLEAR_TRANSACTIONS_ON_EXIT = true;
+    private static final List<Destination> DESTINATIONS;
 
     static {
-        DESTINATIONS = new Destination[]{
+        DESTINATIONS = Arrays.asList(
                 new Destination(Country.FRANCE, "Paris"),
                 new Destination(Country.FRANCE, "Nice"),
                 new Destination(Country.ITALY, "Rome"),
                 new Destination(Country.ITALY, "Milan"),
                 new Destination(Country.USA, "New York"),
                 new Destination(Country.SPAIN, "Barcelona")
-        };
+        );
     }
 
     public static void main(String[] args) {
@@ -57,16 +62,24 @@ public class Main {
         TravelAgencyService service = new TravelAgencyService();
         travelAgency.getAccountingDepartment().paySalaryToAllEmployees(travelAgency.getAllEmployees());
         travelAgency.getAccountingDepartment().payAllBills(travelAgency.getBills());
-        int averageEmployeeAge = service.calculateAverageEmployeeAge(travelAgency.getAllEmployees());
-        log.info("Average employee age: %s".formatted(averageEmployeeAge));
+        int averageEmployeeAge = service.calculateAverageAge(travelAgency.getAllEmployees());
+        log.info("Average employee age: {}", averageEmployeeAge);
 
-        SalesDepartment bestSalesDepartment = travelAgency.getBestPerformingSalesDepartment();
-        log.info("Best performing department: %s with %s contracts in total.".formatted(
-                bestSalesDepartment.getName(), bestSalesDepartment.getTotalTripContractsCount())
-        );
-        log.info("Gross income: £" + travelAgency.calculateGrossIncome());
+        SalesDepartment bestSalesDepartment = travelAgency.getBestPerformingSalesDepartment()
+                .orElseThrow(() -> new RuntimeException("There are no sales departments in travel agency"));
+        log.info("Best performing department: {} with {} contracts in total.", bestSalesDepartment.getName(), bestSalesDepartment.getTotalTripContractsCount());
+
+        double grossIncomePrimaryCurrency = travelAgency.calculateGrossIncome();
+        double grossIncomeDollars = CurrencyConverter.create(TravelAgency.PRIMARY_CURRENCY, Currency.USD).convert(grossIncomePrimaryCurrency);
+        log.info("Gross income: " + TravelAgency.PRIMARY_CURRENCY.format(grossIncomePrimaryCurrency));
+        log.info("Gross income in USD: " + Currency.USD.format(grossIncomeDollars));
+
         List<String> transactionsToday = TransactionStorageManager.getTransactionsOnDate(LocalDate.now());
         log.info("Transactions today: {}", transactionsToday);
+        describeTravelAgencyClass();
+        if(CLEAR_TRANSACTIONS_ON_EXIT) {
+            clearTransactionsReflective();
+        }
     }
 
     private static TravelAgency initTravelAgency(String name, double budget) {
@@ -106,23 +119,23 @@ public class Main {
         Client skylerWhite = new Client("Skyler", "White", LocalDate.parse("1999-07-02"));
         Client charlesBlack = new Client("Charles", "Black", LocalDate.parse("1967-12-25"));
 
-        Trip parisTrip = new Trip("Paris Trip", DESTINATIONS[0],
-                Map.of("ACCOMMODATION", 500.0, "TRAVEL", 450.0, "FOOD", 200.0),
+        Trip parisTrip = new Trip("Paris Trip", DESTINATIONS.get(0),
+                new PaymentDetails(Map.of(CostOption.ACCOMMODATION, 500.0, CostOption.TRANSPORTATION, 450.0, CostOption.FOOD, 200.0), Currency.GBP),
                 LocalDate.now(), LocalDate.now().plusDays(4));
-        Trip niceTrip = new Trip("Nice Trip", DESTINATIONS[1],
-                Map.of("ACCOMMODATION", 1200.0, "TRAVEL", 400.0, "FOOD", 550.0),
+        Trip niceTrip = new Trip("Nice Trip", DESTINATIONS.get(1),
+                new PaymentDetails(Map.of(CostOption.ACCOMMODATION, 1200.0, CostOption.TRANSPORTATION, 400.0, CostOption.FOOD, 550.0), Currency.GBP),
                 LocalDate.now(), LocalDate.now().plusDays(3));
-        Trip romeTrip = new Trip("Rome Trip", DESTINATIONS[2],
-                Map.of("ACCOMMODATION", 750.0, "TRAVEL", 340.0, "FOOD", 170.0),
+        Trip romeTrip = new Trip("Rome Trip", DESTINATIONS.get(2),
+                new PaymentDetails(Map.of(CostOption.ACCOMMODATION, 750.0, CostOption.TRANSPORTATION, 340.0, CostOption.FOOD, 170.0), Currency.GBP),
                 LocalDate.now(), LocalDate.now().plusDays(5));
-        Trip milanTrip = new Trip("Milan Trip", DESTINATIONS[3],
-                Map.of("ACCOMMODATION", 150.0, "TRAVEL", 290.0, "FOOD", 150.0),
+        Trip milanTrip = new Trip("Milan Trip", DESTINATIONS.get(3),
+                new PaymentDetails(Map.of(CostOption.ACCOMMODATION, 150.0, CostOption.TRANSPORTATION, 290.0, CostOption.FOOD, 150.0), Currency.GBP),
                 LocalDate.now(), LocalDate.now().plusDays(7));
-        Trip newYorkTrip = new Trip("New York Trip", DESTINATIONS[4],
-                Map.of("ACCOMMODATION", 300.0, "TRAVEL", 720.0),
+        Trip newYorkTrip = new Trip("New York Trip", DESTINATIONS.get(4),
+                new PaymentDetails(Map.of(CostOption.ACCOMMODATION, 300.0, CostOption.TRANSPORTATION, 720.0), Currency.GBP),
                 LocalDate.now(), LocalDate.now().plusDays(6));
-        Trip barcelonaTrip = new Trip("Barcelona Trip", DESTINATIONS[5],
-                Map.of("ACCOMMODATION", 440.0, "TRAVEL", 600.0, "FOOD", 200.0),
+        Trip barcelonaTrip = new Trip("Barcelona Trip", DESTINATIONS.get(5),
+                new PaymentDetails(Map.of(CostOption.ACCOMMODATION, 440.0, CostOption.TRANSPORTATION, 600.0, CostOption.FOOD, 200.0), Currency.GBP),
                 LocalDate.now(), LocalDate.now().plusDays(3));
 
         milanTrip.book(janeTuck);
@@ -133,12 +146,12 @@ public class Main {
         new TripContract(thomasReyes, charlesBlack, newYorkTrip).sign();
 
         List<Bill> bills = Arrays.asList(
-                new Bill("Rent", 10000.0,  new BankAccount("000000000000000", 0.0)),
-                new Bill("Tax", 15000.0,  new BankAccount("000000000000000", 0.0)),
-                new Bill("Other", 7000.0,  new BankAccount("000000000000000", 0.0))
+                new Bill("Rent", 10000.0, Currency.GBP,  new BankAccount("000000000000000", 0.0)),
+                new Bill("Tax", 15000.0, Currency.GBP, new BankAccount("000000000000000", 0.0)),
+                new Bill("Other", 7000.0, Currency.GBP, new BankAccount("000000000000000", 0.0))
         );
         travelAgency.setBills(bills);
-        log.info("Initialized travel agency '{}' with budget £{}", name, budget);
+        log.info("Initialized travel agency '{}' with budget {}", name, TravelAgency.PRIMARY_CURRENCY.format(budget));
         return travelAgency;
     }
 
@@ -179,6 +192,34 @@ public class Main {
             }
         } catch (Exception e) {
             System.out.println("An error occurred while reading the file: " + e.getMessage());
+        }
+    }
+
+    private static void describeTravelAgencyClass() {
+        log.info("Describing TravelAgency class: ");
+
+        StringBuilder fieldsStr = new StringBuilder("Fields: ");
+        Arrays.stream(TravelAgency.class.getDeclaredFields())
+                .forEach(f -> fieldsStr.append("\n").append(f.toGenericString()));
+        log.info(fieldsStr.toString());
+
+        StringBuilder constructorsStr = new StringBuilder("Constructors: ");
+        Arrays.stream(TravelAgency.class.getConstructors())
+                .forEach(c -> constructorsStr.append("\n").append(c.toGenericString()));
+        log.info(constructorsStr.toString());
+
+        StringBuilder methodsStr = new StringBuilder("Methods: ");
+        Arrays.stream(TravelAgency.class.getDeclaredMethods())
+                .forEach(m -> methodsStr.append("\n").append(m.toGenericString()));
+        log.info(methodsStr.toString());
+    }
+
+    private static void clearTransactionsReflective(){
+        try {
+            Method clearTransactions = TransactionStorageManager.class.getMethod("clearTransactions");
+            clearTransactions.invoke(null);
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
         }
     }
 }

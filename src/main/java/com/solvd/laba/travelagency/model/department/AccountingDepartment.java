@@ -2,6 +2,7 @@ package com.solvd.laba.travelagency.model.department;
 
 import com.solvd.laba.travelagency.exception.AlreadyPaidException;
 import com.solvd.laba.travelagency.exception.NegativeAmountException;
+import com.solvd.laba.travelagency.model.TravelAgency;
 import com.solvd.laba.travelagency.model.finance.Bill;
 import com.solvd.laba.travelagency.model.finance.payment.BankAccount;
 import com.solvd.laba.travelagency.model.finance.payment.Transaction;
@@ -52,10 +53,10 @@ public class AccountingDepartment extends Department implements BudgetManagement
     @Override
     public void paySalary(Employee e) {
         double amount = e.calculateSalary();
-        Bill salary = new Bill("Salary", amount, e.getSalaryCredentials());
+        Bill salary = new Bill("Salary", amount, TravelAgency.PRIMARY_CURRENCY, e.getSalaryCredentials());
         Transaction transaction = new Transaction(companyBankAccount, e.getSalaryCredentials(), salary);
         try {
-            log.info("Paying salary (£{}) for employee {}...", amount, e.fullName());
+            log.info("Paying salary ({}) for employee {}...", salary.getCurrency().format(amount), e.fullName());
             PaymentProcessor.processTransaction(transaction);
         } catch(AlreadyPaidException ex){
             log.error(ex.getMessage(), ex);
@@ -66,7 +67,7 @@ public class AccountingDepartment extends Department implements BudgetManagement
     public void payBill(Bill bill) {
         Transaction transaction = new Transaction(companyBankAccount, bill.getReceiverCredentials(), bill);
         try {
-            log.info("Paying bill (£{})...", bill.getPrice());
+            log.info("Paying bill ({})...", TravelAgency.PRIMARY_CURRENCY.format(bill.getPrice()));
             PaymentProcessor.processTransaction(transaction);
         } catch (AlreadyPaidException ex){
             log.error(ex.getMessage(), ex);

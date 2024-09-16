@@ -4,13 +4,16 @@ import com.solvd.laba.travelagency.model.department.AccountingDepartment;
 import com.solvd.laba.travelagency.model.department.HumanResourcesDepartment;
 import com.solvd.laba.travelagency.model.department.SalesDepartment;
 import com.solvd.laba.travelagency.model.finance.Bill;
+import com.solvd.laba.travelagency.model.finance.Currency;
 import com.solvd.laba.travelagency.model.person.employee.Employee;
 import com.solvd.laba.travelagency.util.CustomLinkedList;
+import com.solvd.laba.travelagency.util.EmployeeModifier;
 
 import java.util.*;
 
 public class TravelAgency {
     public static final double PERFORMANCE_BONUS = 250.0;
+    public static final Currency PRIMARY_CURRENCY = Currency.GBP;
     private String name;
     private Set<SalesDepartment> salesDepartments;
     private AccountingDepartment accountingDepartment;
@@ -25,43 +28,31 @@ public class TravelAgency {
 
     public List<Employee> getAllEmployees() {
         List<Employee> allEmployees = new LinkedList<>();
-        for(SalesDepartment sd : salesDepartments){
-            allEmployees.addAll(sd.getEmployees());
-        }
+        salesDepartments.forEach(sd -> allEmployees.addAll(sd.getEmployees()));
         allEmployees.addAll(accountingDepartment.getEmployees());
         allEmployees.addAll(humanResourcesDepartment.getEmployees());
         return allEmployees;
     }
 
-    public SalesDepartment getBestPerformingSalesDepartment() {
-        if(salesDepartments.isEmpty()) {
-            return null;
-        }
-        Iterator<SalesDepartment> iterator = salesDepartments.iterator();
-        SalesDepartment result = iterator.next();
-        while(iterator.hasNext()){
-            SalesDepartment next = iterator.next();
-            if(next.getTotalTripContractsCount() > result.getTotalTripContractsCount()){
-                result = next;
-            }
-        }
-        return result;
+    public Optional<SalesDepartment> getBestPerformingSalesDepartment() {
+        return salesDepartments.stream()
+                .max(Comparator.comparingInt(SalesDepartment::getTotalTripContractsCount));
+    }
+
+    public void modifyAllEmployees(EmployeeModifier<Employee> modifier) {
+        getAllEmployees().forEach(modifier::modify);
     }
 
     public double calculateGrossIncome(){
-        double result = 0.0;
-        for(SalesDepartment sd : salesDepartments){
-            result += sd.calculateGrossIncome();
-        }
-        return result;
+        return salesDepartments.stream()
+                .map(SalesDepartment::calculateGrossIncome)
+                .reduce(0.0, Double::sum);
     }
 
     public double calculateOverallSalary() {
-        double result = 0.0;
-        for(Employee e : getAllEmployees()){
-            result += e.calculateSalary();
-        }
-        return result;
+        return getAllEmployees().stream()
+                .map(Employee::calculateSalary)
+                .reduce(0.0, Double::sum);
     }
 
     public String getName() {

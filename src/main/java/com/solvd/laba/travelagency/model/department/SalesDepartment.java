@@ -33,21 +33,15 @@ public class SalesDepartment extends Department {
     }
 
     public double calculateGrossIncome(){
-        double result = 0.0;
-        for(Employee e : getEmployees()){
-            Salesman s = (Salesman) e;
-            result += s.calculateAllContractsGrossIncome();
-        }
-        return result;
+        return getSalesmen().stream()
+                .map(Salesman::calculateAllContractsGrossIncome)
+                .reduce(0.0, Double::sum);
     }
 
     public int getTotalTripContractsCount(){
-        int result = 0;
-        for(Employee e : getEmployees()) {
-            Salesman s = (Salesman) e;
-            result += s.getTripContracts().size();
-        }
-        return result;
+        return getSalesmen().stream()
+                .map(s -> s.getTripContracts().size())
+                .reduce(0, Integer::sum);
     }
 
     public List<Salesman> getSalesmen() {

@@ -4,4 +4,5 @@ public interface Payable {
     boolean isPaid();
     void setPaid(boolean paid);
     double getPrice();
+    Currency getCurrency();
 }

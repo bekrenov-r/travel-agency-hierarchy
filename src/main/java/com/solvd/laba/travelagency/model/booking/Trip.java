@@ -2,53 +2,39 @@ package com.solvd.laba.travelagency.model.booking;
 
 import com.solvd.laba.travelagency.exception.AlreadyBookedException;
 import com.solvd.laba.travelagency.model.booking.transport.Transportation;
+import com.solvd.laba.travelagency.model.finance.Currency;
 import com.solvd.laba.travelagency.model.finance.Payable;
 import com.solvd.laba.travelagency.model.location.Destination;
 import com.solvd.laba.travelagency.model.person.Client;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class Trip implements Bookable, Payable {
     private String name;
     private Destination destination;
     private Transportation transportation;
-    private double totalCost;
-    private Map<String, Double> costDetails;
     private LocalDate startDate;
     private LocalDate endDate;
-    private boolean isPaid;
+    private PaymentDetails paymentDetails;
     private boolean isBooked;
     private Client bookedBy;
 
     public Trip(String name, Destination destination) {
         this.name = name;
         this.destination = destination;
-        this.costDetails = new HashMap<>();
-        this.totalCost = calculateTotalCost(costDetails);
     }
 
-    public Trip(String name, Destination destination, Map<String, Double> costDetails, LocalDate startDate, LocalDate endDate) {
+    public Trip(String name, Destination destination, PaymentDetails paymentDetails, LocalDate startDate, LocalDate endDate) {
         this.name = name;
         this.destination = destination;
-        this.costDetails = costDetails;
+        this.paymentDetails = paymentDetails;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.totalCost = calculateTotalCost(costDetails);
     }
 
     public int getDurationDays() {
         return (int) startDate.datesUntil(endDate).count();
-    }
-
-    private double calculateTotalCost(Map<String, Double> costDetails) {
-        double result = 0.0;
-        for (Map.Entry<String, Double> entry : costDetails.entrySet()) {
-            result += entry.getValue();
-        }
-        return result;
     }
 
     public String getName() {
@@ -65,22 +51,6 @@ public class Trip implements Bookable, Payable {
 
     public void setDestination(Destination destination) {
         this.destination = destination;
-    }
-
-    public double getTotalCost() {
-        return totalCost;
-    }
-
-    public void setTotalCost(double totalCost) {
-        this.totalCost = totalCost;
-    }
-
-    public Map<String, Double> getCostDetails() {
-        return costDetails;
-    }
-
-    public void setCostDetails(Map<String, Double> costDetails) {
-        this.costDetails = costDetails;
     }
 
     public LocalDate getStartDate() {
@@ -134,49 +104,52 @@ public class Trip implements Bookable, Payable {
 
     @Override
     public boolean isPaid() {
-        return isPaid;
+        return paymentDetails.isPaid();
     }
 
     @Override
     public void setPaid(boolean paid) {
-        isPaid = paid;
+        paymentDetails.setPaid(paid);
     }
 
     @Override
     public double getPrice() {
-        return totalCost;
+        return paymentDetails.getPrice();
+    }
+
+    @Override
+    public Currency getCurrency() {
+        return paymentDetails.getCurrency();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Trip)) return false;
-        Trip other = (Trip) o;
+        if (!(o instanceof Trip trip)) return false;
 
-        return Objects.equals(totalCost, other.totalCost) && Objects.equals(name, other.name)
-                && Objects.equals(destination, other.destination)
-                && Objects.equals(transportation, other.transportation)
-                && Objects.equals(costDetails, other.costDetails)
-                && Objects.equals(startDate, other.startDate)
-                && Objects.equals(endDate, other.endDate)
-                && (isPaid == other.isPaid)
-                && (isBooked == other.isBooked)
-                && Objects.equals(bookedBy, other.bookedBy);
+        if (isBooked != trip.isBooked) return false;
+        if (!Objects.equals(name, trip.name)) return false;
+        if (!Objects.equals(destination, trip.destination)) return false;
+        if (!Objects.equals(transportation, trip.transportation))
+            return false;
+        if (!Objects.equals(startDate, trip.startDate)) return false;
+        if (!Objects.equals(endDate, trip.endDate)) return false;
+        if (!Objects.equals(paymentDetails, trip.paymentDetails))
+            return false;
+        return Objects.equals(bookedBy, trip.bookedBy);
     }
 
     @Override
     public int hashCode() {
-        int hash = Objects.hashCode(name);
-        hash = 31 * hash + Objects.hashCode(destination);
-        hash = 31 * hash + Objects.hashCode(transportation);
-        hash = 31 * hash + Objects.hashCode(totalCost);
-        hash = 31 * hash + Objects.hashCode(costDetails);
-        hash = 31 * hash + Objects.hashCode(startDate);
-        hash = 31 * hash + Objects.hashCode(endDate);
-        hash = 31 * hash + (isBooked ? 1 : 0);
-        hash = 31 * hash + (isPaid ? 1 : 0);
-        hash = 31 * hash + Objects.hashCode(bookedBy);
-        return hash;
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (destination != null ? destination.hashCode() : 0);
+        result = 31 * result + (transportation != null ? transportation.hashCode() : 0);
+        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
+        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
+        result = 31 * result + (paymentDetails != null ? paymentDetails.hashCode() : 0);
+        result = 31 * result + (isBooked ? 1 : 0);
+        result = 31 * result + (bookedBy != null ? bookedBy.hashCode() : 0);
+        return result;
     }
 
     @Override
@@ -185,11 +158,10 @@ public class Trip implements Bookable, Payable {
         sb.append("name='").append(name).append('\'');
         sb.append(", destination=").append(destination);
         sb.append(", transportation=").append(transportation);
-        sb.append(", totalCost=").append(totalCost);
         sb.append(", startDate=").append(startDate);
         sb.append(", endDate=").append(endDate);
+        sb.append(", paymentDetails=").append(paymentDetails);
         sb.append(", isBooked=").append(isBooked);
-        sb.append(", isPaid=").append(isPaid);
         sb.append(", bookedBy=").append(bookedBy);
         sb.append('}');
         return sb.toString();

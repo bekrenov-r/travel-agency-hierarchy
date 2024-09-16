@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class TransactionStorageManager {
@@ -28,6 +29,7 @@ public class TransactionStorageManager {
                 .put("sender", sender)
                 .put("receiver", receiver)
                 .put("amount", transaction.getPayable().getPrice())
+                .put("currency", transaction.getPayable().getCurrency().name())
                 .put("timestamp", transaction.getTimestamp());
         try {
             File file = new File(FILE_PATH);
@@ -56,11 +58,11 @@ public class TransactionStorageManager {
                         return date.isEqual(startDate) || date.isEqual(endDate)
                                 || (date.isAfter(startDate) && date.isBefore(endDate));
                     }).map(json -> json.toString(4))
-                    .toList();
+                    .collect(Collectors.toList());
         } catch(IOException ex) {
             log.error(ex.getMessage(), ex);
         }
-        return List.of();
+        return new ArrayList<>();
     }
 
     public static List<String> getTransactionsOnDate(LocalDate date) {
@@ -74,7 +76,7 @@ public class TransactionStorageManager {
                         LocalDate d = LocalDateTime.parse(json.getString("timestamp")).toLocalDate();
                         return date.isEqual(d);
                     }).map(json -> json.toString(4))
-                    .toList();
+                    .collect(Collectors.toList());
         } catch(IOException ex) {
             log.error(ex.getMessage(), ex);
             return new ArrayList<>();

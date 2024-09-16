@@ -1,5 +1,6 @@
 package com.solvd.laba.travelagency.model.booking.transport;
 
+import com.solvd.laba.travelagency.model.finance.Currency;
 import com.solvd.laba.travelagency.model.location.Address;
 
 import java.time.LocalDateTime;
@@ -8,15 +9,15 @@ import java.util.Objects;
 public class BusTransportation extends Transportation {
     private String busNumber;
 
-    public BusTransportation(Address startLocation, Address endLocation, double price, String busNumber) {
-        super(startLocation, endLocation, price);
+    public BusTransportation(Address startLocation, Address endLocation, double price, Currency currency, String busNumber) {
+        super(startLocation, endLocation, price, currency);
         this.busNumber = busNumber;
     }
 
     public BusTransportation(
-            Address startLocation, Address endLocation, double price,
+            Address startLocation, Address endLocation, double price, Currency currency,
             LocalDateTime startTime, LocalDateTime endTime, String busNumber) {
-        super(startLocation, endLocation, price, startTime, endTime);
+        super(startLocation, endLocation, price, currency, startTime, endTime);
         this.busNumber = busNumber;
     }
 

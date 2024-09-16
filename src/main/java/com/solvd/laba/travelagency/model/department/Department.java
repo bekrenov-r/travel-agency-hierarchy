@@ -2,6 +2,7 @@ package com.solvd.laba.travelagency.model.department;
 
 import com.solvd.laba.travelagency.model.location.Address;
 import com.solvd.laba.travelagency.model.person.employee.Employee;
+import com.solvd.laba.travelagency.util.DepartmentModifier;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -20,12 +21,12 @@ public abstract class Department {
     public abstract Collection<Employee> getEmployees();
 
     public boolean hasEmployee(Employee employee) {
-        for (Employee e : getEmployees()) {
-            if (employee.equals(e)) {
-                return true;
-            }
-        }
-        return false;
+        return getEmployees().stream()
+                .anyMatch(employee::equals);
+    }
+
+    public void modifyDepartment(DepartmentModifier<Department> modifier) {
+        modifier.modify(this);
     }
 
     public String getName() {

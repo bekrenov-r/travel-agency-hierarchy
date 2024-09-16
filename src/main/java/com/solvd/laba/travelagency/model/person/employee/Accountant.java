@@ -6,7 +6,10 @@ import com.solvd.laba.travelagency.model.finance.FinancialReport;
 import com.solvd.laba.travelagency.model.person.ContactData;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 public class Accountant extends Employee {
     private List<FinancialReport> reports;
@@ -23,18 +26,14 @@ public class Accountant extends Employee {
 
     @Override
     protected double calculateBonus() {
-        if(getApprovedReports().size() >= AccountingDepartment.FINANCE_REPORTS_NEEDED_FOR_PERFORMANCE_BONUS){
-            return TravelAgency.PERFORMANCE_BONUS;
-        }
-        return 0.0;
+        return getApprovedReports().size() >= AccountingDepartment.FINANCE_REPORTS_NEEDED_FOR_PERFORMANCE_BONUS
+                ? TravelAgency.PERFORMANCE_BONUS : 0.0;
     }
 
     private Collection<FinancialReport> getApprovedReports(){
-        List<FinancialReport> result = new LinkedList<>();
-        for(FinancialReport report : reports) {
-            if(report.isApproved()) result.add(report);
-        }
-        return result;
+        return reports.stream()
+                .filter(FinancialReport::isApproved)
+                .toList();
     }
 
     @Override

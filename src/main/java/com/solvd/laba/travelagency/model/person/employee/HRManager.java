@@ -25,10 +25,8 @@ public class HRManager extends Employee {
 
     @Override
     protected double calculateBonus() {
-        if(jobContracts.size() >= HumanResourcesDepartment.EMPLOYMENTS_NEEDED_FOR_PERFORMANCE_BONUS){
-            return TravelAgency.PERFORMANCE_BONUS;
-        }
-        return 0.0;
+        return jobContracts.size() >= HumanResourcesDepartment.EMPLOYMENTS_NEEDED_FOR_PERFORMANCE_BONUS
+                ? TravelAgency.PERFORMANCE_BONUS : 0.0;
     }
 
     public void addJobContract(JobContract jobContract){

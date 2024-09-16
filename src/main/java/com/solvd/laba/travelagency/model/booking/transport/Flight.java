@@ -1,5 +1,6 @@
 package com.solvd.laba.travelagency.model.booking.transport;
 
+import com.solvd.laba.travelagency.model.finance.Currency;
 import com.solvd.laba.travelagency.model.location.Address;
 
 import java.time.LocalDateTime;
@@ -11,9 +12,9 @@ public class Flight extends Transportation {
     private String number;
 
     public Flight(
-            Address startLocation, Address endLocation, double price,
+            Address startLocation, Address endLocation, double price, Currency currency,
             LocalDateTime startTime, LocalDateTime endTime, String number) {
-        super(startLocation, endLocation, price, startTime, endTime);
+        super(startLocation, endLocation, price, currency, startTime, endTime);
         this.number = number;
     }
 

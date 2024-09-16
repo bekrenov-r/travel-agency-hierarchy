@@ -6,8 +6,6 @@ public interface BillManagement {
     void payBill(Bill bill);
 
     default void payAllBills(Iterable<Bill> bills) {
-        for (Bill bill : bills) {
-            payBill(bill);
-        }
+        bills.forEach(this::payBill);
     }
 }

@@ -1,5 +1,6 @@
 package com.solvd.laba.travelagency.model.booking.transport;
 
+import com.solvd.laba.travelagency.model.finance.Currency;
 import com.solvd.laba.travelagency.model.location.Address;
 import com.solvd.laba.travelagency.model.person.Client;
 
@@ -9,25 +10,21 @@ import java.util.Objects;
 public class CompositeTransportation extends Transportation {
     private List<Transportation> transportations;
 
-    private CompositeTransportation(Address startLocation, Address endLocation, double price, List<Transportation> transportations) {
-        super(startLocation, endLocation, price);
+    private CompositeTransportation(Address startLocation, Address endLocation, double price, Currency currency, List<Transportation> transportations) {
+        super(startLocation, endLocation, price, currency);
         this.transportations = transportations;
     }
 
     @Override
     public void book(Client client) {
         super.book(client);
-        for(Transportation t : transportations){
-            t.book(client);
-        }
+        transportations.forEach(t -> t.book(client));
     }
 
     @Override
     public void cancelBooking() {
         super.cancelBooking();
-        for(Transportation t : transportations){
-            t.cancelBooking();
-        }
+        transportations.forEach(Transportation::cancelBooking);
     }
 
     public static CompositeTransportation ofTransportations(List<Transportation> transportations){
@@ -36,11 +33,10 @@ public class CompositeTransportation extends Transportation {
         }
         Address startLocation = transportations.get(0).getStartLocation();
         Address endLocation = transportations.get(transportations.size() - 1).getEndLocation();
-        double price = 0.0;
-        for(Transportation t : transportations) {
-            price += t.getPrice();
-        }
-        return new CompositeTransportation(startLocation, endLocation, price, transportations);
+        double price = transportations.stream()
+                .map(Transportation::getPrice)
+                .reduce(0.0, Double::sum);
+        return new CompositeTransportation(startLocation, endLocation, price, null, transportations);
     }
 
     public List<Transportation> getTransportations() {
