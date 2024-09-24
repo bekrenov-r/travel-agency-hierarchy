@@ -1,1 +1,106 @@
-{"transactions": []}
+{"transactions": [
+    {
+        "amount": 9700,
+        "receiver": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000"
+        },
+        "sender": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000000"
+        },
+        "currency": "GBP",
+        "timestamp": "2024-09-24T11:44:55.439973800"
+    },
+    {
+        "amount": 9450,
+        "receiver": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000"
+        },
+        "sender": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000000"
+        },
+        "currency": "GBP",
+        "timestamp": "2024-09-24T11:44:55.453750100"
+    },
+    {
+        "amount": 9450,
+        "receiver": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000"
+        },
+        "sender": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000000"
+        },
+        "currency": "GBP",
+        "timestamp": "2024-09-24T11:44:55.459735600"
+    },
+    {
+        "amount": 8400,
+        "receiver": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000"
+        },
+        "sender": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000000"
+        },
+        "currency": "GBP",
+        "timestamp": "2024-09-24T11:44:55.464721300"
+    },
+    {
+        "amount": 10750,
+        "receiver": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000"
+        },
+        "sender": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000000"
+        },
+        "currency": "GBP",
+        "timestamp": "2024-09-24T11:44:55.471706100"
+    },
+    {
+        "amount": 10000,
+        "receiver": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000"
+        },
+        "sender": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000000"
+        },
+        "currency": "GBP",
+        "timestamp": "2024-09-24T11:44:55.478257500"
+    },
+    {
+        "amount": 15000,
+        "receiver": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000"
+        },
+        "sender": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000000"
+        },
+        "currency": "GBP",
+        "timestamp": "2024-09-24T11:44:55.485850700"
+    },
+    {
+        "amount": 7000,
+        "receiver": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000"
+        },
+        "sender": {
+            "credential_type": "BANK_ACCOUNT",
+            "number": "000000000000000000"
+        },
+        "currency": "GBP",
+        "timestamp": "2024-09-24T11:44:55.491802100"
+    }
+]}

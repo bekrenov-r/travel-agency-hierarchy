@@ -1,5 +1,6 @@
 package com.solvd.laba.travelagency.model.booking;
 
+import com.solvd.laba.travelagency.exception.NegativeAmountException;
 import com.solvd.laba.travelagency.model.finance.Currency;
 import com.solvd.laba.travelagency.model.finance.Payable;
 
@@ -33,6 +34,27 @@ public class PaymentDetails implements Payable {
     @Override
     public Currency getCurrency() {
         return this.currency;
+    }
+
+    public void setCost(CostOption option, double amount) {
+        if(amount < 0) {
+            throw new NegativeAmountException(amount);
+        }
+        costDetails.put(option, amount);
+    }
+
+    public void increaseCost(CostOption option, double amount) {
+        if(amount < 0) {
+            throw new NegativeAmountException(amount);
+        }
+        costDetails.put(option, costDetails.get(option) + amount);
+    }
+
+    public void decreaseCost(CostOption option, double amount) {
+        if(amount < 0) {
+            throw new NegativeAmountException(amount);
+        }
+        costDetails.put(option, costDetails.get(option) - amount);
     }
 
     private double calculateTotalCost(Map<CostOption, Double> costDetails) {
