@@ -8,11 +8,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
+import java.util.function.Supplier;
 
 public class PaymentProcessor {
     private static final Logger log = LogManager.getLogger(PaymentProcessor.class);
 
-    public static void processTransaction(Transaction transaction) throws AlreadyPaidException {
+    public static void processTransaction(Supplier<Transaction> transactionSupplier) throws AlreadyPaidException {
+        Transaction transaction = transactionSupplier.get();
         if(transaction.getPayable().isPaid()) {
             throw new AlreadyPaidException();
         }

@@ -57,7 +57,7 @@ public class AccountingDepartment extends Department implements BudgetManagement
         Transaction transaction = new Transaction(companyBankAccount, e.getSalaryCredentials(), salary);
         try {
             log.info("Paying salary ({}) for employee {}...", salary.getCurrency().format(amount), e.fullName());
-            PaymentProcessor.processTransaction(transaction);
+            PaymentProcessor.processTransaction(() -> transaction);
         } catch(AlreadyPaidException ex){
             log.error(ex.getMessage(), ex);
         }
@@ -68,7 +68,7 @@ public class AccountingDepartment extends Department implements BudgetManagement
         Transaction transaction = new Transaction(companyBankAccount, bill.getReceiverCredentials(), bill);
         try {
             log.info("Paying bill ({})...", TravelAgency.PRIMARY_CURRENCY.format(bill.getPrice()));
-            PaymentProcessor.processTransaction(transaction);
+            PaymentProcessor.processTransaction(() -> transaction);
         } catch (AlreadyPaidException ex){
             log.error(ex.getMessage(), ex);
         }

@@ -75,7 +75,8 @@ public class TravelAgencyApplication extends Thread {
         log.info("Gross income in USD: " + Currency.USD.format(grossIncomeDollars));
 
         new Thread(() -> {
-            travelAgency.modifyAllEmployees(employee -> {
+            List<Employee> lowIncomeEmployees = travelAgency.getEmployees(e -> e.getMonthSalary() < 4000);
+            travelAgency.modifyEmployees(lowIncomeEmployees, employee -> {
                 double newSalary = employee.getMonthSalary() + employee.getMonthSalary() / 10;
                 employee.setMonthSalary(employee.getMonthSalary() + newSalary);
             });

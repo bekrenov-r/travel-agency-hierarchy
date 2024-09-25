@@ -10,6 +10,8 @@ import com.solvd.laba.travelagency.util.CustomLinkedList;
 import com.solvd.laba.travelagency.util.EmployeeModifier;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class TravelAgency {
     public static final double PERFORMANCE_BONUS = 250.0;
@@ -34,12 +36,22 @@ public class TravelAgency {
         return allEmployees;
     }
 
+    public List<Employee> getEmployees(Predicate<Employee> condition){
+        return getAllEmployees().stream()
+                .filter(condition)
+                .collect(Collectors.toList());
+    }
+
     public Optional<SalesDepartment> getBestPerformingSalesDepartment() {
         return salesDepartments.stream()
                 .max(Comparator.comparingInt(SalesDepartment::getTotalTripContractsCount));
     }
 
     public void modifyAllEmployees(EmployeeModifier<Employee> modifier) {
+        getAllEmployees().forEach(modifier::modify);
+    }
+
+    public void modifyEmployees(Collection<Employee> employees, EmployeeModifier<Employee> modifier) {
         getAllEmployees().forEach(modifier::modify);
     }
 
